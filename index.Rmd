@@ -1,18 +1,18 @@
 ---
-title: "irina-valenzuela-website"
-description: |
-  Welcome to the website. I hope you enjoy it!
-site: distill::distill_website
+title: "Irina Valenzuela"
+image: "irina.jpg"
+links:
+  - label: LinkedIn
+    url: "https://www.linkedin.com/in/irinavalenzuela/"
+  - label: Twitter
+    url: "https://twitter.com/irinaestelavr"
+  - label: GitHub
+    url: "https://github.com/irinavalenzuela"
+  - label: Email
+    url: "mailto:vlnzlrm2@illinois.edu"
+output:
+  postcards::jolla
+site: distill::distill_website  
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-
-# Learn more about creating websites with Distill at:
-# https://rstudio.github.io/distill/website.html
-
-# Learn more about publishing to GitHub Pages at:
-# https://rstudio.github.io/distill/publish_website.html#github-pages
-
-```
-
+ 
+I am a Ph.D. student in Economics at the University of Illinois Urbana-Champaign. Research experience in topics of education, political economy, gender and health.

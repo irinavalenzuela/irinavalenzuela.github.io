@@ -1,5 +1,6 @@
 name: "."
-title: "irina-valenzuela-website"
+title: "Irina Valenzuela"
+theme: theme.css
 description: |
   irina-valenzuela-website
 output_dir: "docs"
