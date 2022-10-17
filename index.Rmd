@@ -15,4 +15,4 @@ output:
 site: distill::distill_website  
 ---
  
-I am a Ph.D. student in Economics at the University of Illinois Urbana-Champaign. Research experience in topics of education, political economy, gender and health.
+I am a Ph.D. candidate in Economics at the University of Illinois Urbana-Champaign. I am applied microeconomist with research experience in education, political economy, gender, and health.
