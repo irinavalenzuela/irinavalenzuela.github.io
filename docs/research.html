@@ -455,8 +455,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
 
   <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-  <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
-  <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+  <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet"/>
+  <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
   <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
   <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
@@ -785,6 +785,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article table.gt_table td,
   d-article table.gt_table th {
     border-bottom: none;
+    font-size: 100%;
   }
 
   .html-widget {
@@ -825,9 +826,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     display: none !important;
   }
 
+  hr.section-separator {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 0px;
+  }
+
+
+  d-byline {
+    border-top: none;
+  }
+
   d-article {
     padding-top: 2.5rem;
     padding-bottom: 30px;
+    border-top: none;
   }
 
   d-appendix {
@@ -922,6 +935,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   d-article div.sourceCode pre {
     padding-left: 18px;
     font-size: 14px;
+  }
+
+  /* tweak for Pandoc numbered line within distill */
+  d-article pre.numberSource code > span {
+      left: -2em;
   }
 
   d-article pre {
@@ -1683,6 +1701,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // create d-title
     $('.d-title').changeElementType('d-title');
 
+    // separator
+    var separator = '<hr class="section-separator" style="clear: both"/>';
+    // prepend separator above appendix
+    $('.d-byline').before(separator);
+    $('.d-article').before(separator);
+
     // create d-byline
     var byline = $('<d-byline></d-byline>');
     $('.d-byline').replaceWith(byline);
@@ -1760,8 +1784,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     $('.distill-force-highlighting-css').parent().remove();
 
     // remove empty line numbers inserted by pandoc when using a
-    // custom syntax highlighting theme
-    $('code.sourceCode a:empty').remove();
+    // custom syntax highlighting theme, except when numbering line
+    // in code chunk
+    $('pre:not(.numberLines) code.sourceCode a:empty').remove();
 
     // load distill framework
     load_distill_framework();
@@ -1787,12 +1812,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
       // add orcid ids
       $('.authors-affiliations').find('.author').each(function(i, el) {
         var orcid_id = front_matter.authors[i].orcidID;
+        var author_name = front_matter.authors[i].author
         if (orcid_id) {
           var a = $('<a></a>');
           a.attr('href', 'https://orcid.org/' + orcid_id);
           var img = $('<img></img>');
           img.addClass('orcid-id');
-          img.attr('alt', 'ORCID ID');
+          img.attr('alt', author_name ? 'ORCID ID for ' + author_name : 'ORCID ID');
           img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
           a.append(img);
           $(this).append(a);
@@ -1857,15 +1883,21 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        if ($(this).children()[0].nodeName == "D-FOOTNOTE") {
-          var fn = $(this).children()[0]
+        const citeChild = $(this).children()[0]
+        // Do not process if @xyz has been used without escaping and without bibliography activated
+        // https://github.com/rstudio/distill/issues/466
+        if (citeChild === undefined) return true
+
+        if (citeChild.nodeName == "D-FOOTNOTE") {
+          var fn = citeChild
           $(this).html(fn.shadowRoot.querySelector("sup"))
           $(this).id = fn.id
           fn.remove()
         }
         var refs = $(this).attr('data-cites').split(" ");
         var refHtml = refs.map(function(ref) {
-          return "<p>" + $('#ref-' + ref).html() + "</p>";
+          // Could use CSS.escape too here, we insure backward compatibility in navigator
+          return "<p>" + $('div[id="ref-' + ref + '"]').html() + "</p>";
         }).join("\n");
         window.tippy(this, {
           allowHTML: true,
@@ -2406,7 +2438,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2450,6 +2482,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <div class="d-title">
 <h1>Research</h1>
+
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
 
@@ -2465,91 +2498,21 @@ d-article p {
 </style>
 </div>
 <h1 id="working-papers">Working Papers</h1>
-<h3
-id="do-low-stakes-visits-to-schools-affect-student-performance-evidence-from-a-large-scale-monitoring-system-in-peru-job-market-paper"><a
-href="https://drive.google.com/file/d/1P2Z99_xIK192Ud7Jm2FR-p9BXFtdEl4U"
-target="_blank">Do Low-stakes Visits to Schools Affect Student
-Performance?: Evidence From a Large-scale Monitoring System in Peru</a>
-(Job Market Paper)</h3>
-<p>Findings from prior studies of the effects of low-stakes monitoring
-(monitoring unaccompanied by explicit incentives or punishments) on
-student achievement in developing countries are mixed. Because most of
-these initiatives were carried out on a small scale by non-governmental
-organizations, these findings may lack validity in the case of
-large-scale government interventions. I investigate the educational
-impact of the Semaforo Escuela program. This is a large-scale monitoring
-system in Peru that implements unannounced monthly school inspections,
-the results of which are reported to local education officials. To
-analyze the causal effect of these monitoring visits, I use the random
-variation in the selection of visited schools in the program’s first
-year to estimate causal effects of low-stakes monitoring on student math
-and reading scores. Although I fail to find evidence that a monitoring
-visit enhances school-level student performance on average, there is a
-positive effect of monitoring on reading test scores at low-performing
-urban schools and when urban schools are visited in the months preceding
-the exam date.</p>
-<h3
-id="girls-outperforming-boys-pre-school-gender-gap-in-literacy-and-numeracy-skills-in-african-countries-with-julie-buhl-wiggers-rebecca-thornton-and-mahounan-yedomiffi">Girls
-Outperforming Boys: Pre-school Gender Gap in Literacy and Numeracy
-Skills in African Countries (With Julie Buhl-Wiggers, Rebecca Thornton,
-and Mahounan Yedomiffi)</h3>
-<p>Little is known about whether there exists a gender gap in pre-school
-measures of early numeracy and literacy skills, and what predictors – if
-any – help to understand any difference across gender. We use two rounds
-of available Demographic and Health Surveys (DHS) and Multiple Indicator
-Cluster Survey (MICS), collected from 2011 to 2019 across 25 African
-countries, and compare mothers’ reports of numbers and letters
-identification among boys and girls ages 3–4. We report that, on
-average, girls are 2 percentage points more likely to identify at least
-ten letters of the alphabet, 1 percentage point more likely to read four
-words, and 2 percentage points more likely to identify the first ten
-numbers. These magnitudes are small in absolute terms but relevant given
-the low rates of these competences in African countries (on average 20
-percent). We find that part of this gender gap is due to girls accessing
-early childhood education programs. In addition, we report that both
-mother’s and father’s literacy show a positive intergenerational effect
-on their children’s outcomes. The mother’s literacy has a greater
-magnitude than the father’s and is more relevant for their daughter’s
-competencies.</p>
+<h3 id="low-stakes-school-monitoring-and-learning-outcomes-evidence-from-a-large-scale-program-in-peru-job-market-paper"><a href="https://drive.google.com/file/d/1P2Z99_xIK192Ud7Jm2FR-p9BXFtdEl4U" target="_blank">Low-stakes School Monitoring and Learning Outcomes: Evidence From a Large-scale Program in Peru</a> (Job Market Paper)</h3>
+<p>I study the impact on student achievement of a nationwide monitoring program implemented in Peruvian public schools in 2015, which involves unannounced school visits. Despite their low-stakes nature, these visits may affect teachers’ behavior if they feel supervised, learn something new, or are reminded about relevant programs linked to the teaching practices highlighted during the visits. Using student test scores from 2010 to 2015, I perform a difference-in-difference analysis to show that, after the program’s first year, reading z-scores and satisfactory levels in reading and math exhibit an increase. The improvement in learning outcomes is primarily attributed to the schools that underwent high-intensity monitoring. Although I fail to find evidence that a low-intensity monitoring visit enhances school-level student performance, I find that urban schools located at the bottom of the performance distribution significantly affect reading test scores.</p>
+<h3 id="girls-outperforming-boys-pre-school-gender-gap-in-literacy-and-numeracy-skills-in-african-countries-with-julie-buhl-wiggers-and-rebecca-thornton">Girls Outperforming Boys: Pre-school Gender Gap in Literacy and Numeracy Skills in African Countries (With Julie Buhl-Wiggers and Rebecca Thornton)</h3>
+<p>A growing body of research shows that girls of recent generations outperform boys in learning outcomes across the world. This literature focuses mainly on school-age children, with limited evidence on gender disparities at preschool ages. We use data from the Demographic and Health Surveys and Multiple Indicator Cluster Surveys across 25 Sub-Saharan African countries from 2011 to 2019 and compare mothers’ reports of preschool readiness skills of boys and girls ages 3–4. We find that girls are 2 percentage points more likely to both identify ten letters of the alphabet and identify the first ten numbers, while we find no difference in reading four words Moreover, we find that girls are more likely to attend early childhood education programs and be engaged in parent-child interactions at home. Both early childhood education and home stimulation activities are positively related to early literacy and numeracy skills with early childhood education having a stronger effect for girls compared to boys. Mother’s literacy have a positive effect on their children’s outcomes, with a greater magnitude for girls than boys.</p>
 <h1 id="work-in-progress">Work in Progress</h1>
-<h3
-id="effects-of-political-corruption-on-political-attitudes-evidence-from-theodebrecht-scandal-in-peru">Effects
-of Political Corruption on Political Attitudes: Evidence from
-theOdebrecht Scandal in Peru</h3>
-<p>Does political corruption erode people’s attitudes towards political
-institutions and democracy? I test this hypothesis in the context of
-Peru by exploiting a corruption shock, the Odebrecht case, which
-revealed the corruption of high-ranked politicians in the tenders for
-large infrastructure projects. I draw on household survey data collected
-during the unanticipated Odebrecht scandal, which allows me to adopt a
-quasi-experimental approach. I find that, following revelations of
-corruption by governmental officials, people’s confidence in different
-political institutions and democracy does not vary significantly. These
-findings are in line with no change in perceived corruption as one of
-the main problems of the country after the scandal.</p>
+<h3 id="effects-of-political-corruption-on-political-attitudes-evidence-from-the-odebrecht-scandal">Effects of Political Corruption on Political Attitudes: Evidence from the Odebrecht Scandal</h3>
+<p>This study investigates the impact of political corruption on public attitudes toward political institutions and democracy. I answer this question within the Peruvian context by exploiting the corruption shock triggered by the Odebrecht case. This scandal unveiled the complicity of high-ranking politicians in corrupt practices during the procurement process for significant infrastructure projects. Employing household survey data gathered during the unanticipated Odebrecht scandal, this research employs a quasi-experimental approach to assess the impact. The findings reveal a substantial reduction in public confidence in various political institutions and the democratic system in the aftermath of the exposure of government officials’ corrupt activities. This result aligns with the increased perception of corruption following the scandal, emphasizing the intricate connection between political corruption and the public’s trust in democratic processes.</p>
 <h1 id="publications">Publications</h1>
-<h3
-id="assets-and-economic-context-factors-related-to-poverty-in-peru-in-spanish-translated-tittle"><a
-href="https://www.bcrp.gob.pe/en/publications/working-papers/wp-2013-13-assets-and-economic-context-factors-related-to-the-poverty-in-peru.html"
-target="_blank">Assets and Economic Context – Factors related to poverty
-in Peru</a> (in Spanish, translated tittle)</h3>
-<p>Central Reserve Bank of Peru. Working Paper Series Nº 2013-013.
-November, 2013.</p>
-<h3
-id="focalización-de-los-programas-sociales-en-el-perú-2007-2011-in-spanish-translated-tittle"><a
-href="https://www.bcrp.gob.pe/docs/Publicaciones/Revista-Moneda/moneda-155/moneda-155-03.pdf"
-target="_blank">Focalización de los programas sociales en el Perú: 2007
-– 2011</a> (in Spanish, translated tittle)</h3>
+<h3 id="assets-and-economic-context-factors-related-to-poverty-in-peru-in-spanish-translated-tittle"><a href="https://www.bcrp.gob.pe/en/publications/working-papers/wp-2013-13-assets-and-economic-context-factors-related-to-the-poverty-in-peru.html" target="_blank">Assets and Economic Context – Factors related to poverty in Peru</a> (in Spanish, translated tittle)</h3>
+<p>Central Reserve Bank of Peru. Working Paper Series Nº 2013-013. November, 2013.</p>
+<h3 id="focalización-de-los-programas-sociales-en-el-perú-2007-2011-in-spanish-translated-tittle"><a href="https://www.bcrp.gob.pe/docs/Publicaciones/Revista-Moneda/moneda-155/moneda-155-03.pdf" target="_blank">Focalización de los programas sociales en el Perú: 2007 – 2011</a> (in Spanish, translated tittle)</h3>
 <p>Revista Moneda, issue 155, p. 18-22. 2013}</p>
-<h3
-id="depth-of-outreach-in-the-context-of-microfinance-commercialization-in-peru-in-spanish-translated-tittle"><a
-href="https://revistas.pucp.edu.pe/index.php/economia/article/view/2686"
-target="_blank">Depth of outreach in the context of microfinance
-commercialization in Peru</a> (in Spanish, translated tittle)</h3>
-<p>Revista Economía. Departamento de Economía – Pontificia Universidad
-Católica del Perú. Vol. XXXIV, N° 68, pp. 33-63. December, 2011</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h3 id="depth-of-outreach-in-the-context-of-microfinance-commercialization-in-peru-in-spanish-translated-tittle"><a href="https://revistas.pucp.edu.pe/index.php/economia/article/view/2686" target="_blank">Depth of outreach in the context of microfinance commercialization in Peru</a> (in Spanish, translated tittle)</h3>
+<p>Revista Economía. Departamento de Economía – Pontificia Universidad Católica del Perú. Vol. XXXIV, N° 68, pp. 33-63. December, 2011</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

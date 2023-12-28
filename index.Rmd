@@ -15,4 +15,5 @@ output:
 site: distill::distill_website  
 ---
  
-I am a Ph.D. candidate in Economics at the University of Illinois Urbana-Champaign. I am applied microeconomist with research experience in education, political economy, gender, and health.
+
+I am an applied microeconomist from the University of Illinois Urbana-Champaign, with extensive research experience in education, gender, and political economy. I am interested in topics related to inequality and in investigating how information can influence individuals' attitudes and behaviors.
